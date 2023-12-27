@@ -74,7 +74,7 @@ class Hub:
                 data = self._socket.recv(1024)
                 if self._unload == True:
                     return
-                _LOGGER.debug(f"recv data original : {data}")
+                _LOGGER.debug(f"recv data : {data}")
                 if data == b'':
                     self.connect()
                     continue
@@ -82,14 +82,7 @@ class Hub:
                     self.connect()
                     continue
 
-                # 패킷으로 받은것
-                #b'\x02\x10\x02\x02\t\x03\x02\x02\t\x03\x10\x00\x00\x00@\x03'
-                #_LOGGER.error(f"recv data : {bytearray(data).hex()}") - 02100202090302020903100000004003
-                #_LOGGER.error(f"recv data bytearray hex : {data.decode('hex')}")
-                #_LOGGER.debug(f"sensor data : {self._entities[CONF_SENSORS]}")
                 for id, e in self._entities.items():
-                    #_LOGGER.debug(
-                    #    f"entity id : {self._entities[CONF_SENSORS][key].entity_id}, start packet : {self._entities[CONF_SENSORS][key]._bell_start_packet}, end packet : {self._entities[CONF_SENSORS][key]._bell_end_packet}")
                     e.on_recv_data(data)
             except socket.timeout:
                 self.connect()
