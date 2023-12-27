@@ -1,0 +1,31 @@
+{
+    "title": "TCP Client",
+    "config": {
+        "step": {
+            "confirm": {
+                "description": "Do you want to install it?"
+            },
+            "user": {
+                "data": {
+                    "device_name": "input device name",
+                    "host": "Host : Socket IP(192.168.x.x)",
+                    "port": "Port : (default:8899)"
+                },
+                "description": "Click OK to add the integration component"
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "TCP Client",
+                "data": {
+                    "device_name": "input device name",
+                    "host": "Host : Socket IP(192.168.x.x)",
+                    "port": "Port : (default:8899)"
+                },
+                "description": ""
+            }
+        }
+    }
+}
