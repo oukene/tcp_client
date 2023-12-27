@@ -62,6 +62,12 @@ class TCPClientBase:
         self._attr_name = "{}".format(setting.get("name"))
         self._attr_unique_id = self.entity_id
 
+        self._attr_available = hub.isConnected()
+
+    def set_available(self, state):
+        self._attr_available = state
+        self.async_write_ha_state()
+
     @property
     def device_info(self):
         """Information about this entity/device."""

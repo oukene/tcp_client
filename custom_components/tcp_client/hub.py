@@ -38,6 +38,13 @@ class Hub:
             self._socket.close()
         self._socket = None
 
+    def isConnected(self):
+        return self._connected
+
+    def set_entity_state(self, state):
+        for id, e in self._entities.items():
+            e.set_available(state)
+
     def connect(self):
         try:
             self.close()
@@ -45,6 +52,7 @@ class Hub:
             _LOGGER.debug("none")
         finally:
             self._connected = False
+            self.set_entity_state(False)
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._socket.setblocking(True)
 
@@ -54,10 +62,12 @@ class Hub:
                 self._socket.connect((self._host, self._port))
                 _LOGGER.debug("연결 성공")
                 self._connected = True
+                self.set_entity_state(True)
                 break
             except:
                 _LOGGER.error("연결 실패, 재연결 시도")
                 time.sleep(10)
+                self.set_entity_state(False)
                 self._connected = False
                 continue
         
