@@ -31,6 +31,8 @@ class SettingManager(object):
             os.makedirs(DOMAIN)
         if os.path.isfile(filepath) == False:
             with open(filepath, "w") as f:
+                f.write("host:\n\n")
+                f.write("port:\n\n")
                 f.write("sensor:\n\n")
                 f.write("binary_sensor:\n\n")
                 f.write("switch:\n\n")

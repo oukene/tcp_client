@@ -4,9 +4,6 @@
   "config_flow": true,
   "documentation": "",
   "requirements": [],
-  "ssdp": [],
-  "zeroconf": [],
-  "homekit": {},
   "dependencies": [],
   "codeowners": [
     "@oukene"
