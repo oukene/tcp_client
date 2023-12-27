@@ -40,6 +40,13 @@ class TCPClientSwitch(TCPClientBase, BinarySensorEntity):
         self._timer = None
         self._attr_device_class = setting.get("device_class")
 
+        self._state = {}
+        for k, v in setting.get("state", {}).items():
+            state = []
+            for s in v:
+                state.append(bytes.fromhex(s))
+            self._state[k] = state
+
     def state_change(self, state):
         self._attr_is_on = state
         self.async_write_ha_state()
@@ -49,15 +56,11 @@ class TCPClientSwitch(TCPClientBase, BinarySensorEntity):
                     _LOGGER.debug("timer cancel")
                     self._timer.cancel()
                 _LOGGER.debug("create timer")
-                self._timer = threading.Timer(timer, self.state_change, [False])
+                self._timer = threading.Timer(timer, self.state_change, args=[False])
                 self._timer.start()
 
     def on_recv_data(self, data):
         """"""
-        state_setting = self._setting.get("state", {})
-        # _LOGGER.debug("data is : " + str(data) + ", on data : " + bytearray.fromhex(state_setting.get("on")))
-        if eq(bytearray.fromhex(state_setting.get(STATE_ON)), data):
-            self.state_change(True)
-        elif eq(bytearray.fromhex(state_setting.get(STATE_OFF)), data):
-            self.state_change(False)
-
+        for k, v in self._state.items():
+            if data in v:
+                self.state_change(True if k == STATE_ON else False)

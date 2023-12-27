@@ -38,6 +38,13 @@ class TCPClientSwitch(TCPClientBase, SwitchEntity):
         self._attr_is_on = False
         self._timer = None
 
+        self._state = {}
+        for k, v in setting.get("state", {}).items():
+            state = []
+            for s in v:
+                state.append(bytes.fromhex(s))
+            self._state[k] = state
+
     def state_change(self, state):
         self._attr_is_on = state
         self.async_write_ha_state()
@@ -51,13 +58,10 @@ class TCPClientSwitch(TCPClientBase, SwitchEntity):
                 self._timer.start()
 
     def on_recv_data(self, data):
-        """"""
-        state_setting = self._setting.get("state", {})
-        #_LOGGER.debug("data is : " + str(data) + ", on data : " + bytearray.fromhex(state_setting.get("on")))
-        if eq(bytearray.fromhex(state_setting.get(STATE_ON)), data):
-            self.state_change(True)
-        elif eq(bytearray.fromhex(state_setting.get(STATE_OFF)), data):
-            self.state_change(False)
+        for k, v in self._state.items():
+            if data in v:
+                _LOGGER.debug("state change : " + str(k))
+                self.state_change(True if k == STATE_ON else False)
 
     def turn_on(self, **kwargs: Any) -> None:
         command_setting = self._setting.get("command", {})

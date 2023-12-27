@@ -38,16 +38,20 @@ class TCPClientSwitch(TCPClientBase, SensorEntity):
         TCPClientBase.__init__(self, hass, hub, device, setting)
         self._attr_native_value = STATE_UNKNOWN
 
+        self._state = {}
+        for k, v in setting.get("state", {}).items():
+            state = []
+            for s in v:
+                state.append(bytes.fromhex(s))
+            self._state[k] = state
+
     def state_change(self, state):
         self._attr_native_value = state
         self.async_write_ha_state()
 
     def on_recv_data(self, data):
         """"""
-        state_setting = self._setting.get("state", {})
-        _LOGGER.debug("sensor state : " +str(state_setting))
-        for state, value in state_setting.items():
-            _LOGGER.debug("state : " + str(state) + ", value : " + str(value))
-            if eq(bytearray.fromhex(value), data):
-                self.state_change(state)
+        for k, v in self._state.items():
+            if data in v:
+                self.state_change(k)
         

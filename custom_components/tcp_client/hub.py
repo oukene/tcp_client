@@ -107,16 +107,19 @@ class Hub:
     def send_packet(self, data):
         try:
             if self._socket != None:
-                self._socket.send(bytearray.fromhex(data))
+                for d in data:
+                    self._socket.send(bytes.fromhex(d))
             else:
                 # 재연결 후 다시 보냄
                 self.connect()
-                self._socket.send(bytearray.fromhex(data))
+                for d in data:
+                    self._socket.send(bytes.fromhex(d))
         except:
             # 재연결 후 다시 보냄
             _LOGGER.error("send_packet, 소켓이 연결되지 않음, 재접속 후 전송 시도")
             self.connect()
-            self._socket.send(bytearray.fromhex(data))
+            for d in data:
+                self._socket.send(bytes.fromhex(d))
 
     @property
     def hub_id(self):

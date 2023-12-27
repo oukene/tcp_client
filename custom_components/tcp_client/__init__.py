@@ -18,6 +18,7 @@ _LOGGER = logging.getLogger(__name__)
 # List of platforms to support. There should be a matching .py file for each,
 # eg <cover.py> and <sensor.py>
 PLATFORMS = ["switch", "binary_sensor", "sensor", "button"]
+#PLATFORMS = [ "binary_sensor"]
 
 
 async def async_setup(hass: HomeAssistant, config: dict):

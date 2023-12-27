@@ -2,6 +2,9 @@ import asyncio
 from .const import *
 import logging
 from homeassistant.helpers.entity import async_generate_entity_id
+from homeassistant.const import (
+    STATE_ON, STATE_OFF,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -51,6 +54,8 @@ class TCPClientBase:
         self.hass = hass
         self._hub = hub
         self._setting = setting
+        self._attr_extra_state_attributes = {}
+        self._attr_extra_state_attributes["config"] = setting
 
         self.entity_id = async_generate_entity_id(
             ENTITY_ID_FORMAT, "{}_{}".format(DOMAIN, setting.get("name")), current_ids="", hass=hass)

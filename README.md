@@ -28,31 +28,31 @@ port: 8888
 sensor:
   - name: 테스트
     state:
-      '0': '00 00'
-      '1': '00 01'
-      '2': '00 02'
+      '0': ['00']
+      '1': ['01']
+      '2': ['02']
 switch:
   - name: test
     state:
-      'on': '00'
-      'off': '01'
+      'on': ['00']
+      'off': ['01']
     command:
-      'on': '00 00'
-      'off': '00 01'
+      'on': ['00 01']
+      'off': ['01']
     off_timer: 5
 
 binary_sensor:
   - name: test1
     state:
-      'on': '00 00'
-      'off': '00 01'
+      'on': ['00', '01']
+      'off': ['02']
     off_timer: 5
     device_class: sound
 
 button:
   - name: test2
     command:
-      'press': "00 01"
+      'press': ["00"]
 
 ```
 
