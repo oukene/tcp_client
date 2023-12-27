@@ -2,7 +2,7 @@ import logging
 from homeassistant.const import (
      STATE_ON, STATE_OFF,
 )
-
+import threading
 from operator import eq
 from .device import Device, TCPClientBase
 from .const import *
@@ -37,11 +37,20 @@ class TCPClientSwitch(TCPClientBase, BinarySensorEntity):
         """Initialize the sensor."""
         TCPClientBase.__init__(self, hass, hub, device, setting)
         self._attr_is_on = False
+        self._timer = None
         self._attr_device_class = setting.get("device_class")
 
     def state_change(self, state):
         self._attr_is_on = state
         self.async_write_ha_state()
+        if state:
+            if timer := self._setting.get("off_timer"):
+                if self._timer != None:
+                    _LOGGER.debug("timer cancel")
+                    self._timer.cancel()
+                _LOGGER.debug("create timer")
+                self._timer = threading.Timer(timer, self.state_change, [False])
+                self._timer.start()
 
     def on_recv_data(self, data):
         """"""
