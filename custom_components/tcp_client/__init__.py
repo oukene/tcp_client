@@ -32,9 +32,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # Store an instance of the "connecting" class that does the work of speaking
     # with your actual devices.
 
-    SettingManager(entry.data.get(CONF_DEVICE_NAME)).load_setting()
+    SettingManager().set_name(entry.data.get(CONF_DEVICE_NAME))
+    _LOGGER.debug("entry.data.get(CONF_DEVICE_NAME) : " +
+                  str(entry.data.get(CONF_DEVICE_NAME)))
+    SettingManager().load_setting()
     host = SettingManager().get_settings().get(CONF_HOST)
     port = SettingManager().get_settings().get(CONF_PORT)
+
+    if host is None or port is None:
+        return False
     
     hass.data[DOMAIN][entry.entry_id] = hub.Hub(hass, host, port)
 
@@ -60,7 +66,8 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     _LOGGER.debug("call async_unload_entry")
     hub = hass.data[DOMAIN][entry.entry_id]
     hub._unload = True
-    hub.close()
+    if hub.isConnected():
+        hub.close()
     for listener in hass.data[DOMAIN]["listener"]:
         listener()
 

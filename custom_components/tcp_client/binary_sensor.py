@@ -18,7 +18,7 @@ async def async_setup_entry(hass, config_entry, async_add_devices):
 
     hass.data[DOMAIN]["listener"] = []
     hub = hass.data[DOMAIN][config_entry.entry_id]
-    device = Device(NAME, config_entry)
+    device = Device(config_entry.data.get(CONF_DEVICE_NAME), config_entry)
     new_devices = []
 
     if setting := SettingManager().get_settings().get("binary_sensor", {}):
@@ -41,11 +41,12 @@ class TCPClientSwitch(TCPClientBase, BinarySensorEntity):
         self._attr_device_class = setting.get("device_class")
 
         self._state = {}
-        for k, v in setting.get("state", {}).items():
-            state = []
-            for s in v:
-                state.append(bytes.fromhex(s))
-            self._state[k] = state
+        if setting.get("state"):
+            for k, v in setting.get("state", {}).items():
+                state = []
+                for s in v:
+                    state.append(bytes.fromhex(s))
+                self._state[k] = state
 
     def state_change(self, state):
         self._attr_is_on = state

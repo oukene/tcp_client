@@ -1,14 +1,14 @@
 import logging
-from homeassistant.const import (
-    STATE_ON, STATE_OFF,
-)
 import threading
-
 from operator import eq
-from .device import Device, TCPClientBase
-from .const import *
+
 from homeassistant.components.switch import SwitchEntity
+from homeassistant.const import STATE_OFF, STATE_ON
+
 from .common import SettingManager
+from .const import *
+from .device import Device, TCPClientBase
+
 Any = object()
 
 _LOGGER = logging.getLogger(__name__)
@@ -18,7 +18,7 @@ async def async_setup_entry(hass, config_entry, async_add_devices):
 
     hass.data[DOMAIN]["listener"] = []
     hub = hass.data[DOMAIN][config_entry.entry_id]
-    device = Device(NAME, config_entry)
+    device = Device(config_entry.data.get(CONF_DEVICE_NAME), config_entry)
     new_devices = []
 
     if setting := SettingManager().get_settings().get("switch", {}):
@@ -39,11 +39,12 @@ class TCPClientSwitch(TCPClientBase, SwitchEntity):
         self._timer = None
 
         self._state = {}
-        for k, v in setting.get("state", {}).items():
-            state = []
-            for s in v:
-                state.append(bytes.fromhex(s))
-            self._state[k] = state
+        if setting.get("state"):
+            for k, v in setting.get("state", {}).items():
+                state = []
+                for s in v:
+                    state.append(bytes.fromhex(s))
+                self._state[k] = state
 
     def state_change(self, state):
         self._attr_is_on = state
@@ -67,11 +68,11 @@ class TCPClientSwitch(TCPClientBase, SwitchEntity):
         command_setting = self._setting.get("command", {})
         if data := command_setting.get(STATE_ON):
             self._hub.send_packet(data)
-            self.state_change(True)
+        self.state_change(True)
 
     def turn_off(self, **kwargs: Any) -> None:
         command_setting = self._setting.get("command", {})
         if data := command_setting.get(STATE_OFF):
             self._hub.send_packet(data)
-            self.state_change(False)
+        self.state_change(False)
 

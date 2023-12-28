@@ -23,6 +23,9 @@ class SettingManager(object):
 
             cls._init = True
 
+    def set_name(self, name):
+        self._name = name
+
     def load_setting(self):
         # 셋팅을 로드
         filepath = DOMAIN + "/" + self._name + ".yaml"
