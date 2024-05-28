@@ -48,7 +48,7 @@ class TCPClientSwitch(TCPClientBase, SwitchEntity):
 
     def state_change(self, state):
         self._attr_is_on = state
-        self.async_write_ha_state()
+        self.schedule_update_ha_state()
         if state:
             if timer := self._setting.get("off_timer"):
                 if self._timer != None:

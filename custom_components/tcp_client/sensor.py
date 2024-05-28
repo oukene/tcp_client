@@ -48,7 +48,7 @@ class TCPClientSwitch(TCPClientBase, SensorEntity):
 
     def state_change(self, state):
         self._attr_native_value = state
-        self.async_write_ha_state()
+        self.schedule_update_ha_state()
 
     def on_recv_data(self, data):
         """"""
