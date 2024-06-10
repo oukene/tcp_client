@@ -71,7 +71,7 @@ class TCPClientBase:
 
     def set_available(self, state):
         self._attr_available = state
-        self.async_write_ha_state()
+        self.schedule_update_ha_state()
 
     @property
     def device_info(self):

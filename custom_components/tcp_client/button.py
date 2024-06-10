@@ -19,13 +19,13 @@ async def async_setup_entry(hass, config_entry, async_add_devices):
 
     if setting := SettingManager().get_settings().get("button", {}):
         for s in setting:
-            new_devices.append(TCPClientSwitch(hass, device, hub, s))
+            new_devices.append(TCPClientButton(hass, device, hub, s))
 
     if new_devices:
         async_add_devices(new_devices)
 
 
-class TCPClientSwitch(TCPClientBase, ButtonEntity):
+class TCPClientButton(TCPClientBase, ButtonEntity):
     """Representation of a Thermal Comfort Sensor."""
     _attr_has_entity_name = True
 

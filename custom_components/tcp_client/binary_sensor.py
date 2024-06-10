@@ -23,13 +23,13 @@ async def async_setup_entry(hass, config_entry, async_add_devices):
 
     if setting := SettingManager().get_settings().get("binary_sensor", {}):
         for s in setting:
-            new_devices.append(TCPClientSwitch(hass, device, hub, s))
+            new_devices.append(TCPClientBinarySensor(hass, device, hub, s))
 
     if new_devices:
         async_add_devices(new_devices)
 
 
-class TCPClientSwitch(TCPClientBase, BinarySensorEntity):
+class TCPClientBinarySensor(TCPClientBase, BinarySensorEntity):
     """Representation of a Thermal Comfort Sensor."""
     _attr_has_entity_name = True
 

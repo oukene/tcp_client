@@ -32,10 +32,16 @@ class Hub:
         self._entities[entity.entity_id] = entity
 
     def close(self):
+        self.set_entity_state(False)
+        self._connected = False
         if self._socket != None:
-            _LOGGER.debug("socket close")
-            self._socket.shutdown(socket.SHUT_RDWR)
-            self._socket.close()
+            try:
+                _LOGGER.debug("socket close")
+                self._socket.shutdown(socket.SHUT_RDWR)
+                self._socket.close()
+            except Exception as e:
+                _LOGGER.error("exception : " + e)
+            
         self._socket = None
 
     def isConnected(self):
@@ -46,13 +52,7 @@ class Hub:
             e.set_available(state)
 
     def connect(self):
-        try:
-            self.close()
-        except:
-            _LOGGER.debug("none")
-        finally:
-            self._connected = False
-            self.set_entity_state(False)
+        self.close()
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._socket.setblocking(True)
 

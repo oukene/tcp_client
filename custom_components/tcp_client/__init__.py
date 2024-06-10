@@ -68,6 +68,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     hub._unload = True
     if hub.isConnected():
         hub.close()
+        
     for listener in hass.data[DOMAIN]["listener"]:
         listener()
 
