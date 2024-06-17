@@ -35,7 +35,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     SettingManager().set_name(entry.data.get(CONF_DEVICE_NAME))
     _LOGGER.debug("entry.data.get(CONF_DEVICE_NAME) : " +
                   str(entry.data.get(CONF_DEVICE_NAME)))
-    SettingManager().load_setting()
+    await hass.async_add_executor_job(SettingManager().load_setting)
     host = SettingManager().get_settings().get(CONF_HOST)
     port = SettingManager().get_settings().get(CONF_PORT)
 
