@@ -28,6 +28,26 @@ class Hub:
         self._recv_thread.daemon = True
         self._recv_thread.start()
 
+        self._ping_thread = threading.Thread(target=self.ping)
+        self._ping_thread.daemon = True
+        self._ping_thread.start()
+
+    def ping(self):
+        while True:
+            try:
+                if self._socket != None:
+                    self._socket.send(bytearray.fromhex("02"))
+                else:
+                    # 재연결 후 다시 보냄
+                    self.connect()
+                    self._socket.send(bytearray.fromhex("02"))
+            except:
+                # 재연결 후 다시 보냄
+                _LOGGER.error("ping, 소켓이 연결되지 않음, 재접속 후 전송 시도")
+                self.connect()
+                self._socket.send(bytearray.fromhex("02"))
+            time.sleep(60)
+
     def add_entity(self, entity):
         self._entities[entity.entity_id] = entity
 
